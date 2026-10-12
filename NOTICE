@@ -1,0 +1,14 @@
+Our Music - Desktop
+
+This C# Windows application was developed as a desktop adaptation of the interface and features of Music You by Daniel Sevillano:
+https://github.com/DanielSevillano/music-you
+
+The original repository's GPL-3.0 license is retained in LICENSE. This is a separately maintained repository, not a GitHub fork. Independent repository status does not remove the original project's attribution or license terms.
+
+The Windows implementation uses WPF. The Android Kotlin source and the original repository's Git history are not included here.
+
+yt-dlp is downloaded separately from its official releases. Its license and executable dependency notices are documented at:
+https://github.com/yt-dlp/yt-dlp/blob/master/LICENSE
+
+Node.js is an external dependency:
+https://github.com/nodejs/node/blob/main/LICENSE

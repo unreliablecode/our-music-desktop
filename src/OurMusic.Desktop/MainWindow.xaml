@@ -1,0 +1,148 @@
+<Window x:Class="OurMusic.Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:OurMusic.Desktop"
+        WindowStyle="None" Title="Our Music - Desktop" Width="1280" Height="900" MinWidth="1100" MinHeight="820"
+        Background="{DynamicResource CanvasBrush}" FontFamily="Segoe UI" FontSize="14"
+        Closing="Window_Closing" AllowDrop="True" Drop="Window_Drop" Loaded="Window_Loaded" SourceInitialized="Window_SourceInitialized">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="42" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="0" UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
+    <Window.Resources>
+        <DataTemplate x:Key="TrackTemplate">
+            <Grid Margin="8,5">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="68"/><ColumnDefinition Width="*"/><ColumnDefinition Width="60"/></Grid.ColumnDefinitions>
+                <local:CoverArt Track="{Binding}" Width="54" Height="54" HorizontalAlignment="Left"/>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="15" TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Text="{Binding Artist}" Foreground="{DynamicResource MutedBrush}" Margin="0,5,0,0" TextTrimming="CharacterEllipsis"/>
+                </StackPanel>
+                <TextBlock Grid.Column="2" Text="{Binding DurationLabel}" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource MutedBrush}"/>
+            </Grid>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid Background="{DynamicResource CanvasBrush}">
+        <Grid.RowDefinitions><RowDefinition Height="42"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+        <Border x:Name="TitleBar" Background="{DynamicResource CanvasBrush}" Padding="18,0,5,0">
+            <Grid>
+                <TextBlock Text="Our Music - Desktop" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource MutedBrush}"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" WindowChrome.IsHitTestVisibleInChrome="True">
+                    <Button Content="─" ToolTip="Minimize" Width="42" Padding="0" Background="Transparent" Click="Minimize_Click"/>
+                    <Button Content="□" ToolTip="Maximize or restore" Width="42" Padding="0" Background="Transparent" Click="Maximize_Click"/>
+                    <Button Content="×" ToolTip="Close" Width="42" Padding="0" Background="Transparent" FontSize="21" Click="Close_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+        <Grid Grid.Row="1" Background="{DynamicResource CanvasBrush}">
+        <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="140"/></Grid.RowDefinitions>
+        <Grid.ColumnDefinitions><ColumnDefinition Width="200"/><ColumnDefinition Width="*"/><ColumnDefinition Width="270"/></Grid.ColumnDefinitions>
+        <Border Background="{DynamicResource SurfaceBrush}" Padding="18,26">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Top">
+                    <TextBlock Text="Our Music" FontSize="26" FontWeight="SemiBold"/>
+                    <TextBlock Text="YOUR MUSIC, YOUR SPACE" FontSize="10" Foreground="{DynamicResource MutedBrush}" Margin="4,8,0,30"/>
+                    <StackPanel x:Name="NavigationPanel">
+                        <Button Content="⌂   Home" Tag="Home" Click="Navigate_Click"/>
+                        <Button Content="♫   Songs" Tag="Songs" Click="Navigate_Click"/>
+                        <Button Content="♡   Favorites" Tag="Favorites" Click="Navigate_Click"/>
+                        <Button Content="↓   Offline" Tag="Offline" Click="Navigate_Click"/>
+                    </StackPanel>
+                    <TextBlock Text="YOUR PLAYLISTS" FontSize="11" Foreground="{DynamicResource MutedBrush}" Margin="10,25,0,8"/>
+                    <Button Content="＋ Create playlist" Click="CreatePlaylist_Click"/>
+                    <ListBox x:Name="PlaylistList" MaxHeight="150" DisplayMemberPath="Name" SelectionChanged="PlaylistList_SelectionChanged"/>
+                </StackPanel>
+                <StackPanel VerticalAlignment="Bottom">
+                    <Button Content="☀ / ☾ Appearance" Click="Theme_Click"/>
+                    <Button Content="＋ Import audio" Click="Import_Click"/>
+                    <TextBlock Text="Drop audio files anywhere" FontSize="11" Foreground="{DynamicResource MutedBrush}" HorizontalAlignment="Center" Margin="0,8"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+        <Grid x:Name="PagePanel" Grid.Column="1" Margin="28,25" ClipToBounds="True">
+            <Grid.RenderTransform><TranslateTransform/></Grid.RenderTransform>
+            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                <Border CornerRadius="22" Background="{DynamicResource CardBrush}" Padding="4">
+                    <Grid>
+                        <TextBox x:Name="SearchBox" Background="Transparent" ToolTip="Search music or paste a YouTube playlist link" KeyDown="SearchBox_KeyDown" AutomationProperties.Name="Search music or paste a YouTube link"/>
+                        <TextBlock Text="Search songs, artists, or a YouTube link" Margin="14,10" Foreground="{DynamicResource MutedBrush}" IsHitTestVisible="False" VerticalAlignment="Center">
+                            <TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding Text, ElementName=SearchBox}" Value=""><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                </Border>
+                <Button x:Name="SearchButton" Grid.Column="1" Content="Search" Click="Search_Click"/>
+            </Grid>
+            <StackPanel Grid.Row="1" Margin="0,22,0,16">
+                <TextBlock x:Name="PageTitle" Text="Home" FontSize="34" FontWeight="SemiBold"/>
+                <TextBlock x:Name="PageSubtitle" Foreground="{DynamicResource MutedBrush}" Margin="0,7,0,0" TextWrapping="Wrap"/>
+            </StackPanel>
+            <Border x:Name="HomeBanner" Grid.Row="2" Background="{DynamicResource SurfaceBrush}" CornerRadius="24" Padding="18" Margin="0,0,0,16" Visibility="Collapsed">
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="128"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                    <local:CoverArt x:Name="HeroArtwork" Width="110" Height="110" HorizontalAlignment="Left"/>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="TODAY'S PICKS" FontSize="10" Foreground="{DynamicResource MutedBrush}"/>
+                        <TextBlock x:Name="HeroTitle" FontSize="20" FontWeight="SemiBold" Margin="0,7,0,4" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock x:Name="HeroArtist" Foreground="{DynamicResource MutedBrush}" TextTrimming="CharacterEllipsis"/>
+                        <WrapPanel Margin="-4,10,0,-4"><Button Content="Play pick" Click="PlayFeatured_Click" Padding="14,8"/><Button x:Name="RefreshPicksButton" Content="Refresh picks" Click="RefreshPicks_Click" Padding="14,8"/></WrapPanel>
+                    </StackPanel>
+                </Grid>
+            </Border>
+            <WrapPanel Grid.Row="3" Margin="-4,0,0,12">
+                <Button Content="▶ Play all" Click="PlayAll_Click"/><Button Content="＋ Queue" Click="Enqueue_Click"/><Button Content="♡ Favorite" Click="Favorite_Click"/>
+                <Button Content="↓ Save offline" Click="Download_Click"/><Button Content="Add to playlist" Click="AddToPlaylist_Click"/><Button Content="Remove" Click="RemoveTrack_Click"/>
+            </WrapPanel>
+            <Grid Grid.Row="4">
+                <ListBox x:Name="TrackList" ItemTemplate="{StaticResource TrackTemplate}" MouseDoubleClick="TrackList_DoubleClick"/>
+                <StackPanel x:Name="EmptyState" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="♫" FontSize="54" HorizontalAlignment="Center" Foreground="{DynamicResource MutedBrush}"/>
+                    <TextBlock Text="Make room for your favorites" FontSize="21" Margin="0,12,0,8" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Search above, paste a playlist link, or import audio." Foreground="{DynamicResource MutedBrush}" TextWrapping="Wrap" HorizontalAlignment="Center"/>
+                    <Button Content="Import music" Click="Import_Click" Margin="0,16,0,0"/>
+                </StackPanel>
+            </Grid>
+            <TextBlock Grid.Row="5" x:Name="StatusText" Text="Ready" Foreground="{DynamicResource MutedBrush}" TextWrapping="Wrap" Margin="0,12,0,0" MaxHeight="60"/>
+        </Grid>
+        <Border Grid.Column="2" Background="{DynamicResource CardBrush}" CornerRadius="24" Margin="0,25,20,25" Padding="16">
+            <Grid>
+                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                <Grid><TextBlock Text="Up next" FontSize="22" FontWeight="SemiBold"/><Button Content="Clear" HorizontalAlignment="Right" Padding="12,6" Click="ClearQueue_Click"/></Grid>
+                <ListBox Grid.Row="1" x:Name="QueueList" DisplayMemberPath="Title" MouseDoubleClick="QueueList_DoubleClick" Margin="0,15,0,12"/>
+                <StackPanel Grid.Row="2">
+                    <Button Content="Remove selected" Click="RemoveQueue_Click"/><Button Content="Lyrics / notes" Click="Lyrics_Click"/>
+                    <ComboBox x:Name="SleepTimer" SelectedIndex="0" SelectionChanged="SleepTimer_SelectionChanged" AutomationProperties.Name="Sleep timer">
+                        <ComboBoxItem Content="Sleep timer: off"/><ComboBoxItem Tag="15" Content="Stop after 15 minutes"/>
+                        <ComboBoxItem Tag="30" Content="Stop after 30 minutes"/><ComboBoxItem Tag="60" Content="Stop after 60 minutes"/>
+                    </ComboBox>
+                </StackPanel>
+            </Grid>
+        </Border>
+        <Border Grid.Row="1" Grid.ColumnSpan="3" Background="{DynamicResource SurfaceBrush}" Padding="22,16">
+            <Grid>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="285"/><ColumnDefinition Width="*"/><ColumnDefinition Width="160"/></Grid.ColumnDefinitions>
+                <Grid VerticalAlignment="Center" Margin="0,0,14,0">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="66"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                    <local:CoverArt x:Name="NowArtwork" Width="54" Height="54" HorizontalAlignment="Left"/>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock x:Name="NowTitle" Text="Nothing playing yet" FontSize="16" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock x:Name="NowArtist" Text="Double-click a song to play" Foreground="{DynamicResource MutedBrush}" Margin="0,5,0,0" TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                </Grid>
+                <StackPanel Grid.Column="1">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button x:Name="ShuffleButton" Content="Shuffle: off" Click="Shuffle_Click" Padding="10,9"/><Button Content="⏮" Click="Previous_Click"/>
+                        <Button x:Name="PlayButton" Content="▶" FontSize="20" Width="66" Click="PlayPause_Click"/><Button Content="⏭" Click="Next_Click"/>
+                        <Button x:Name="RepeatButton" Content="Repeat: off" Click="Repeat_Click" Padding="10,9"/>
+                    </StackPanel>
+                    <Slider IsMoveToPointEnabled="True" x:Name="SeekBar" Minimum="0" Maximum="1" PreviewMouseLeftButtonDown="Seek_MouseDown" PreviewMouseLeftButtonUp="Seek_MouseUp" Margin="16,8"/>
+                    <TextBlock x:Name="TimeText" Text="0:00 / 0:00" HorizontalAlignment="Center" FontSize="11" Foreground="{DynamicResource MutedBrush}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="22,0,0,0">
+                    <TextBlock Text="Volume" Foreground="{DynamicResource MutedBrush}" Margin="0,0,0,10"/><Slider x:Name="VolumeSlider" Minimum="0" Maximum="1" Value="0.7" ValueChanged="Volume_Changed"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+    </Grid>
+</Window>
