@@ -71,6 +71,8 @@ dotnet run --project tests/OurMusic.SmokeTests -c Release -- --online
 
 The default checks cover local playback, saved data, queue behavior, recommendation ranking, and interface settings. The online checks also exercise cover downloads, recommendation refresh, YouTube streaming, and an offline download. Each run uses a separate temporary data folder.
 
+GitHub Actions runs the build and interface checks with `--skip-audio`, because its hosted runner has no usable playback device. Run the default and online checks on a Windows desktop to verify audio.
+
 ## Known limits
 
 There is no YouTube sign-in, album or artist browsing, automatic lyric lookup, synchronized lyrics, embedded audio tag extraction, normalization, or silence skipping. Restricted videos may not play, and online availability depends on YouTube and yt-dlp. The main title bar follows the app theme; dialog title colors depend on Windows support.

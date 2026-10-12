@@ -60,13 +60,17 @@ internal static class Program
         Check(window.WindowStyle == WindowStyle.None && ((SolidColorBrush)((Border)window.FindName("TitleBar")).Background).Color == ((SolidColorBrush)window.Background).Color, "Title bar matches the app theme");
         Check(((FrameworkElement)window.FindName("PagePanel")).HasAnimatedProperties, "Page changes have transition animations");
         ((Slider)window.FindName("VolumeSlider")).Value = 0;
-        await (Task)Invoke(window, "PlayAtAsync", 0)!;
-        await Task.Delay(1800);
-        Check(Field<bool>(window, "opened"), "Native audio opens local WAV");
-        Check(Field<MediaPlayer>(window, "player").Position.TotalSeconds > 0, "Audio playback advances");
-        Check(new LibraryStore().State.Tracks.First(t => t.Id == first.Id).PlayCount == 1, "Successful playback records listening history");
-        Invoke(window, "PlayPause_Click", Button(), new RoutedEventArgs());
-        Check(!Field<bool>(window, "playing"), "Pause stops playback");
+        if (!args.Contains("--skip-audio"))
+        {
+            await (Task)Invoke(window, "PlayAtAsync", 0)!;
+            await Task.Delay(1800);
+            Check(Field<bool>(window, "opened"), "Native audio opens local WAV");
+            Check(Field<MediaPlayer>(window, "player").Position.TotalSeconds > 0, "Audio playback advances");
+            Check(new LibraryStore().State.Tracks.First(t => t.Id == first.Id).PlayCount == 1, "Successful playback records listening history");
+            Invoke(window, "PlayPause_Click", Button(), new RoutedEventArgs());
+            Check(!Field<bool>(window, "playing"), "Pause stops playback");
+        }
+        else Console.WriteLine("SKIP Audio playback checks (headless runner)");
         navigation.Tag = "Offline"; Invoke(window, "Navigate_Click", navigation, new RoutedEventArgs());
         Check(tracks.Items.Count == 2, "Offline page shows local songs");
         Invoke(window, "ClearQueue_Click", Button(), new RoutedEventArgs());
