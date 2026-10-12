@@ -16,7 +16,9 @@ A Windows music player built in C# and WPF. Search YouTube, listen to local file
 
 ## Getting started
 
-The app runs on Windows 10 or 11, x64. Development requires the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0). Online playback uses [yt-dlp](https://github.com/yt-dlp/yt-dlp) and requires [Node.js](https://nodejs.org/) on PATH for YouTube's JavaScript challenges.
+Download the Windows x64 ZIP from [Releases](https://github.com/unreliablecode/our-music-desktop/releases/latest), extract it, and open `OurMusic.Desktop.exe`. Keep the extracted files together. No .NET installation is needed for the packaged release.
+
+The app runs on Windows 10 or 11, x64. Online playback uses [yt-dlp](https://github.com/yt-dlp/yt-dlp) and requires [Node.js](https://nodejs.org/) on PATH for YouTube's JavaScript challenges. Development requires the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0).
 
 From PowerShell in the repository root:
 
@@ -37,7 +39,7 @@ If YouTube playback stops working after a service change, run `Setup.ps1` again 
 
 ## Using the player
 
-Home shows a starter mix on first launch, then refreshes it in the background. Double-click a track to play it, or use Play all to start the displayed list. Select a song before adding it to the queue, marking it as a favorite, saving it offline, or choosing a playlist.
+Home shows a starter mix on first launch, then refreshes it in the background. Each song has its own play button in search results, Home, library pages, playlists, and the queue. Click it to start that song immediately. Double-clicking a row also works; Play all starts the displayed list from the beginning. Select a song before adding it to the queue, marking it as a favorite, saving it offline, or choosing a playlist.
 
 Paste a YouTube or YouTube Music playlist URL into the search box to load its first 50 entries. Text searches return up to 20 results. Import audio with the sidebar button, or drag files into the window. Supported extensions are MP3, M4A, WAV, WMA, AAC, and MP4; playback depends on the codecs available in Windows.
 

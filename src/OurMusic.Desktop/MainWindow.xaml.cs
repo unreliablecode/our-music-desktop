@@ -149,8 +149,38 @@ public partial class MainWindow : Window
     }
     private async void TrackList_DoubleClick(object sender, MouseButtonEventArgs e)
     {
+        if (InsideButton(e.OriginalSource as DependencyObject)) return;
         if (TrackList.SelectedItem is not Track track) return;
-        store.State.Queue = visible.ToList(); await PlayAtAsync(visible.IndexOf(track));
+        await PlayTrackAsync(track);
+    }
+    private async void TrackPlay_Click(object sender, RoutedEventArgs e)
+    {
+        e.Handled = true;
+        if (sender is Button { DataContext: Track track }) await PlayTrackAsync(track);
+    }
+    private Task PlayTrackAsync(Track track)
+    {
+        var index = visible.FindIndex(t => t.Id == track.Id);
+        if (index < 0) return Task.CompletedTask;
+        TrackList.SelectedItem = visible[index];
+        store.State.Queue = visible.ToList();
+        return PlayAtAsync(index);
+    }
+    private async void QueuePlay_Click(object sender, RoutedEventArgs e)
+    {
+        e.Handled = true;
+        if (sender is not Button button) return;
+        var item = ItemsControl.ContainerFromElement(QueueList, button);
+        if (item != null) await PlayAtAsync(QueueList.ItemContainerGenerator.IndexFromContainer(item));
+    }
+    private static bool InsideButton(DependencyObject? source)
+    {
+        while (source != null)
+        {
+            if (source is Button) return true;
+            source = source is FrameworkContentElement content ? content.Parent : VisualTreeHelper.GetParent(source);
+        }
+        return false;
     }
     private async void PlayAll_Click(object sender, RoutedEventArgs e) { if (visible.Count == 0) return; store.State.Queue = visible.ToList(); await PlayAtAsync(0); }
     private async void PlayPause_Click(object sender, RoutedEventArgs e)
@@ -161,7 +191,7 @@ public partial class MainWindow : Window
     private async void Previous_Click(object sender, RoutedEventArgs e) { if (opened && player.Position.TotalSeconds > 3) player.Position = TimeSpan.Zero; else await AdvanceAsync(-1); }
     private async void Next_Click(object sender, RoutedEventArgs e) => await AdvanceAsync(1);
     private void Enqueue_Click(object sender, RoutedEventArgs e) { if (Selected() is not Track track) return; store.State.Queue.Add(store.Add(track)); RefreshQueue(); Save(); Status("Added to queue."); }
-    private async void QueueList_DoubleClick(object sender, MouseButtonEventArgs e) { if (QueueList.SelectedIndex >= 0) await PlayAtAsync(QueueList.SelectedIndex); }
+    private async void QueueList_DoubleClick(object sender, MouseButtonEventArgs e) { if (!InsideButton(e.OriginalSource as DependencyObject) && QueueList.SelectedIndex >= 0) await PlayAtAsync(QueueList.SelectedIndex); }
     private void ClearQueue_Click(object sender, RoutedEventArgs e) { playCancellation.Cancel(); player.Stop(); opened = playing = false; current = null; NowArtwork.Track = null; PlayButton.Content = "▶"; NowTitle.Text = "Nothing playing yet"; NowArtist.Text = "Double-click a song to play"; SeekBar.Value = 0; TimeText.Text = "0:00 / 0:00"; store.State.Queue.Clear(); store.State.QueueIndex = -1; RefreshQueue(); Save(); Status("Queue cleared."); }
     private void RemoveQueue_Click(object sender, RoutedEventArgs e)
     {

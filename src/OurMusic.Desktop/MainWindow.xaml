@@ -11,13 +11,22 @@
     <Window.Resources>
         <DataTemplate x:Key="TrackTemplate">
             <Grid Margin="8,5">
-                <Grid.ColumnDefinitions><ColumnDefinition Width="68"/><ColumnDefinition Width="*"/><ColumnDefinition Width="60"/></Grid.ColumnDefinitions>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="68"/><ColumnDefinition Width="*"/><ColumnDefinition Width="54"/><ColumnDefinition Width="48"/></Grid.ColumnDefinitions>
                 <local:CoverArt Track="{Binding}" Width="54" Height="54" HorizontalAlignment="Left"/>
                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
                     <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="15" TextTrimming="CharacterEllipsis"/>
                     <TextBlock Text="{Binding Artist}" Foreground="{DynamicResource MutedBrush}" Margin="0,5,0,0" TextTrimming="CharacterEllipsis"/>
                 </StackPanel>
                 <TextBlock Grid.Column="2" Text="{Binding DurationLabel}" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{DynamicResource MutedBrush}"/>
+                <Button Grid.Column="3" Content="▶" Click="TrackPlay_Click" Width="38" Height="38" Padding="0" Margin="10,0,0,0" VerticalAlignment="Center" ToolTip="{Binding Title, StringFormat=Play {0}}" AutomationProperties.Name="{Binding Title, StringFormat=Play {0}}"/>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="QueueTrackTemplate">
+            <Grid Margin="0,5">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="42"/><ColumnDefinition Width="*"/><ColumnDefinition Width="38"/></Grid.ColumnDefinitions>
+                <local:CoverArt Track="{Binding}" Width="34" Height="34" HorizontalAlignment="Left"/>
+                <TextBlock Grid.Column="1" Text="{Binding Title}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" ToolTip="{Binding Title}"/>
+                <Button Grid.Column="2" Content="▶" Click="QueuePlay_Click" Width="32" Height="32" Padding="0" Margin="4,0,0,0" VerticalAlignment="Center" ToolTip="{Binding Title, StringFormat=Play {0}}" AutomationProperties.Name="{Binding Title, StringFormat=Play {0}}"/>
             </Grid>
         </DataTemplate>
     </Window.Resources>
@@ -108,7 +117,7 @@
             <Grid>
                 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
                 <Grid><TextBlock Text="Up next" FontSize="22" FontWeight="SemiBold"/><Button Content="Clear" HorizontalAlignment="Right" Padding="12,6" Click="ClearQueue_Click"/></Grid>
-                <ListBox Grid.Row="1" x:Name="QueueList" DisplayMemberPath="Title" MouseDoubleClick="QueueList_DoubleClick" Margin="0,15,0,12"/>
+                <ListBox Grid.Row="1" x:Name="QueueList" ItemTemplate="{StaticResource QueueTrackTemplate}" MouseDoubleClick="QueueList_DoubleClick" Margin="0,15,0,12"/>
                 <StackPanel Grid.Row="2">
                     <Button Content="Remove selected" Click="RemoveQueue_Click"/><Button Content="Lyrics / notes" Click="Lyrics_Click"/>
                     <ComboBox x:Name="SleepTimer" SelectedIndex="0" SelectionChanged="SleepTimer_SelectionChanged" AutomationProperties.Name="Sleep timer">
